@@ -7,14 +7,16 @@ const autoTrackPlugin = declare((api, options, dirname) => {
         visitor: {
             Program: {
                 enter (path, state) {
+                    state.init = 1
                     path.traverse({
                         ImportDeclaration (curPath) {
                             const requirePath = curPath.get('source').node.value;
-                            if (requirePath === options.trackerPath) {
+                            // console.log(requirePath.match(options.trackerPath))
+                            if (requirePath.match(options.trackerPath)) {
                                 const specifierPath = curPath.get('specifiers.0');
                                 if (specifierPath.isImportSpecifier()) {
                                     state.trackerImportId = specifierPath.toString();
-                                } else if(specifierPath.isImportNamespaceSpecifier()) {
+                                } else if(specifierPath.isImportNamespaceSpecifier() || specifierPath.isImportDefaultSpecifier()) {
                                     state.trackerImportId = specifierPath.get('local').toString();
                                 }
                                 path.stop();
@@ -91,10 +93,11 @@ const autoTrackPlugin = declare((api, options, dirname) => {
                     // 取到第一个参数
                     const firstExpression = expression.arguments[0]
                     const bodyPathFirst = firstExpression.body
-                    if (bodyPathFirst.type === 'BlockStatement') {
+                    if (bodyPathFirst.type === 'BlockStatement' && state.init) {
+                        state.init--
                         const nameLogsAst = api.template.ast(`${state.trackerImportId}("${state.rootLog}","first init","")`)
                         bodyPathFirst.body.unshift(nameLogsAst)
-                        path.stop()
+                        // path.stop()
                     }
                 }
             }

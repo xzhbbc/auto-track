@@ -20,7 +20,7 @@ const ast = parser.parse(sourceCode, {
 const { code } = transformFromAstSync(ast, sourceCode, {
     plugins: [[autoTrackPlugin, {
         trackerPath: 'entLog',
-        import: '@/core/entlog'
+        import: '@/core/entLog'
     }]]
 });
 

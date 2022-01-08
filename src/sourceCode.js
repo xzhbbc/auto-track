@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-
+// import _entLog2 from "@/core/entLog";
 const logFilter = 'test_logs'
 
 const Index = () => {
