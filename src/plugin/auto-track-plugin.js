@@ -80,10 +80,23 @@ const autoTrackPlugin = declare((api, options, dirname) => {
                     const nameLogsAst = api.template.ast(`${state.trackerImportId}("${state.rootLog}","${nameLogs}","")`)
                     bodyPath.node.body.unshift(nameLogsAst)
                 }
-                //  else {
-                //     const ast = api.template.statement(`{${state.trackerImportId}();return PREV_BODY;}`)({PREV_BODY: bodyPath.node});
-                //     bodyPath.replaceWith(ast);
-                // }
+            },
+            'ExpressionStatement'(path, state) {
+                // console.log(path, state)
+                const bodyPath = path.get('body')
+                const expression = bodyPath?.container?.expression
+                const calleeName = expression?.callee?.name
+                // 找到useEffect
+                if (calleeName == 'useEffect' && expression?.arguments.length === 2) {
+                    // 取到第一个参数
+                    const firstExpression = expression.arguments[0]
+                    const bodyPathFirst = firstExpression.body
+                    if (bodyPathFirst.type === 'BlockStatement') {
+                        const nameLogsAst = api.template.ast(`${state.trackerImportId}("${state.rootLog}","first init","")`)
+                        bodyPathFirst.body.unshift(nameLogsAst)
+                        path.stop()
+                    }
+                }
             }
         }
     }

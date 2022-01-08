@@ -8,6 +8,10 @@ const Index = () => {
         test()
     }, [])
 
+    useEffect(() => {
+        console.log('sec ===')
+    }, [])
+
     const test = () => {
         console.log('test')
     }
