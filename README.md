@@ -11,7 +11,7 @@
 
 #### classComponent
 
-![avatar](./demoClass.png)
+![avatar](./demoClass.jpg)
 
 ### 运行
 
